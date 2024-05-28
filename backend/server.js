@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
+const articlesRouter = require('./controllers/article');
 
 app.use(cors());
 
@@ -22,9 +23,6 @@ db.mongoose
 
 //Ici on envoit les infos vers le front
 
-app.get('/message', (req, res) => {
-    const message = 'messageType'
-    res.send(message);
-});
+app.use('/api', articlesRouter);
 
 app.listen(port, () => console.log('app running on http://localhost:3000'));

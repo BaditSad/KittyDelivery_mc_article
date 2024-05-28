@@ -1,15 +1,109 @@
-h3 {
-    margin: 40px 0 0;
-  }
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
-  a {
-    color: #42b983;
-  }
-  
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  background-color: #00ADEF;
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+  color: white;
+  font-size: 2rem;
+}
+
+.main {
+  display: flex;
+  width: 80%;
+  margin-top: 2rem;
+}
+
+.menu-card {
+  flex: 2;
+  background-color: #E0E0E0;
+  padding: 1rem;
+  margin-right: 1rem;
+}
+
+.card-items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.card-item {
+  background-color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+.item-placeholder {
+  height: 100px;
+  background-color: #f0f0f0;
+  margin-bottom: 0.5rem;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.add-button {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.5rem;
+  background-color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.sidebar {
+  flex: 1;
+  background-color: #E0E0E0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar button {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.delivery-status, .referral {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: white;
+}
+
+.progress-bar {
+  width: 100%;
+  background-color: #f0f0f0;
+  height: 1rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.progress {
+  width: 0%;
+  height: 100%;
+  background-color: #00ADEF;
+}
+
+input[type="email"] {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
