@@ -16,11 +16,11 @@
             <p>{{ item.description }}</p>
             <div class="buttons">
               <button @click="modifierItem(item)">Modifier</button>
-              <button @click="supprimerItem(item)">Supprimer</button>
+              <button @click="deleteItem(item)">Supprimer</button>
             </div>
           </div>
         </div>
-        <button class="add-button">+</button>
+        <button class="add-button" @click="addItem">+</button>
       </div>
       <div class="sidebar">
         <button>Mon profil</button>
@@ -45,6 +45,7 @@
 <script>
 import { getArticles } from "@/services/HandlerGetArticles";
 import { deleteArticle } from "@/services/HandlerDeleteArticles";
+import { postArticle } from "@/services/HandlerPostArticles";
 
 export default {
   name: "HomePage",
@@ -61,7 +62,7 @@ export default {
     }
   },
   methods: {
-    async supprimerItem(item) {
+    async deleteItem(item) {
       if (
         confirm(
           `Êtes-vous sûr de vouloir supprimer l'article: ${item.article_name}?`
@@ -77,9 +78,25 @@ export default {
         }
       }
     },
+    async addItem() {
+      const newArticle = {
+        menu_id: 1,
+        article_name: "Nouvel Article",
+        description: "Description de l'article",
+        price: 10,
+      };
+      try {
+        console.log(newArticle);
+        const createdArticle = await postArticle(newArticle);
+        this.menuItems.push(createdArticle);
+      } catch (error) {
+        console.error("Erreur lors de la création de l'article:", error);
+      }
+    },
   },
 };
 </script>
+
 
 <style scoped>
 .container {

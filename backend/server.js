@@ -23,6 +23,8 @@ db.mongoose
 
 //Ici on envoit les infos vers le front
 
+app.use(bodyParser.json());
+
 app.use("/api", articlesRouter);
 
 app.listen(port, () => console.log("app running on http://localhost:3000"));
