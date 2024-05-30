@@ -15,7 +15,7 @@
             <p>Prix : {{ item.price }} €</p>
             <p>{{ item.description }}</p>
             <div class="buttons">
-              <button @click="modifierItem(item)">Modifier</button>
+              <button @click="selectItemForEdit(item, index)">Modifier</button>
               <button @click="deleteItem(item)">Supprimer</button>
             </div>
           </div>
@@ -39,6 +39,30 @@
         </div>
       </div>
     </div>
+    <div v-if="selectedItem" class="edit-form">
+      <h2>Modifier l'article</h2>
+      <form @submit.prevent="modifierItem">
+        <input
+          type="text"
+          v-model="editItem.article_name"
+          placeholder="Nom de l'article"
+          required
+        />
+        <textarea
+          v-model="editItem.description"
+          placeholder="Description"
+          required
+        ></textarea>
+        <input
+          type="number"
+          v-model="editItem.price"
+          placeholder="Prix"
+          required
+        />
+        <button type="submit">Enregistrer</button>
+        <button type="button" @click="cancelEdit">Annuler</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -46,12 +70,16 @@
 import { getArticles } from "@/services/HandlerGetArticles";
 import { deleteArticle } from "@/services/HandlerDeleteArticles";
 import { postArticle } from "@/services/HandlerPostArticles";
+import { updateArticle } from "@/services/HandlerPutArticles";
 
 export default {
   name: "HomePage",
   data() {
     return {
       menuItems: [],
+      selectedItem: null,
+      editItem: null,
+      selectedIndex: null,
     };
   },
   async mounted() {
@@ -86,17 +114,36 @@ export default {
         price: 10,
       };
       try {
-        console.log(newArticle);
         const createdArticle = await postArticle(newArticle);
         this.menuItems.push(createdArticle);
       } catch (error) {
         console.error("Erreur lors de la création de l'article:", error);
       }
     },
+    selectItemForEdit(item, index) {
+      this.selectedItem = item;
+      this.editItem = { ...item };
+      this.selectedIndex = index;
+    },
+    async modifierItem() {
+      try {
+        await updateArticle(this.editItem._id, this.editItem);
+        this.menuItems.splice(this.selectedIndex, 1, this.editItem);
+        this.selectedItem = null;
+        this.editItem = null;
+        this.selectedIndex = null;
+      } catch (error) {
+        console.error("Erreur lors de la modification de l'article:", error);
+      }
+    },
+    cancelEdit() {
+      this.selectedItem = null;
+      this.editItem = null;
+      this.selectedIndex = null;
+    },
   },
 };
 </script>
-
 
 <style scoped>
 .container {

@@ -33,4 +33,19 @@ router.post("/articles", async (req, res) => {
   }
 });
 
+router.put("/articles/:id", async (req, res) => {
+  try {
+    const article = await Article.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!article) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+    res.json(article);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
 module.exports = router;
