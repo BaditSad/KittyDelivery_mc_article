@@ -19,8 +19,8 @@
             v-for="(item, index) in menuItems"
             :key="index"
           >
-            <p class="item">Prix : {{ item.price }} €</p>
-            <p class="item">{{ item.description }}</p>
+            <p class="item">Prix : {{ item.article_price }} €</p>
+            <p class="item">{{ item.article_description }}</p>
             <div class="buttons">
               <button class="button-update" @click="selectItemForEdit(item, index)"> Modifier </button>
               <button class="button-delete" @click="deleteItem(item)"> Supprimer </button>
@@ -57,13 +57,13 @@
           required
         />
         <textarea
-          v-model="editItem.description"
+          v-model="editItem.article_description"
           placeholder="Description"
           required
         ></textarea>
         <input
           type="number"
-          v-model="editItem.price"
+          v-model="editItem.article_price"
           placeholder="Prix"
           required
         />

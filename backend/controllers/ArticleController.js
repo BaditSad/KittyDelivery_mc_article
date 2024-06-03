@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+module.exports = router;
 const Article = require("../models/article");
 
 router.get("/articles", async (req, res) => {
@@ -11,12 +12,10 @@ router.get("/articles", async (req, res) => {
   }
 });
 
-router.delete("/articles/:id", async (req, res) => {
+router.delete("/articles/:articleId", async (req, res) => {
+  const { articleId } = req.params;
   try {
-    const article = await Article.findByIdAndDelete(req.params.id);
-    if (!article) {
-      return res.status(404).json({ message: "Article not found" });
-    }
+    const article = await Article.findByIdAndDelete({ article_id: articleId });
     res.json({ message: "Article deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -39,13 +38,9 @@ router.put("/articles/:id", async (req, res) => {
       new: true,
       runValidators: true,
     });
-    if (!article) {
-      return res.status(404).json({ message: "Article not found" });
-    }
+    await article.save();
     res.json(article);
   } catch (error) {
     res.status(400).send(error);
   }
 });
-
-module.exports = router;
