@@ -30,7 +30,9 @@
         <button class="add-button" @click="addItem">Ajouter un produit</button>
       </div>
       <div class="sidebar">
-        <button>Mes commandes et statistiques</button>
+        <router-link to="/stats">
+          <button>Mes commandes et statistiques</button>
+        </router-link>
         <div class="delivery-status">
           <h3>Suivi de livraisons</h3>
           <p class="delivery">Pas de livraison en cours</p>
