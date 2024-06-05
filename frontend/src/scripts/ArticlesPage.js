@@ -1,21 +1,28 @@
 import { getArticles } from "@/services/HandlerGetArticles";
-import { deleteArticle } from "@/services/HandlerDeleteArticles";
-import { postArticle } from "@/services/HandlerPostArticles";
-import { updateArticle } from "@/services/HandlerPutArticles";
+import { deleteArticle } from "@/services/HandlerDeleteArticle";
+import { postArticle } from "@/services/HandlerPostArticle";
+import { updateArticle } from "@/services/HandlerPutArticle";
 
 export default {
   name: "ArticlePage",
   data() {
     return {
-      menuItems: [],
+      articlesItems: [],
       selectedItem: null,
       editItem: null,
       selectedIndex: null,
+      newArticle: {
+        menu_id: "",
+        article_name: "",
+        description: "",
+        price: 0,
+      },
+      isAddingArticle: false,
     };
   },
   async mounted() {
     try {
-      this.menuItems = await getArticles();
+      this.articlesItems = await getArticles();
     } catch (error) {
       console.error("Erreur lors de la récupération des articles:", error);
     }
@@ -29,7 +36,7 @@ export default {
       ) {
         try {
           await deleteArticle(item._id);
-          this.menuItems = this.menuItems.filter(
+          this.articlesItems = this.articlesItems.filter(
             (article) => article._id !== item._id
           );
         } catch (error) {
@@ -38,18 +45,24 @@ export default {
       }
     },
     async addItem() {
-      const newArticle = {
-        menu_id: 1,
-        article_name: "Nouvel Article",
-        description: "Description de l'article",
-        price: 10,
-      };
       try {
-        const createdArticle = await postArticle(newArticle);
-        this.menuItems.push(createdArticle);
+        //need to call user => restaurant_id
+        this.newArticle.restaurant_id = "1";
+        const createdArticle = await postArticle(this.newArticle);
+        this.articlesItems.push(createdArticle);
+        this.resetNewArticle();
+        this.isAddingArticle = false; // Masquer le formulaire d'ajout après l'ajout
       } catch (error) {
         console.error("Erreur lors de la création de l'article:", error);
       }
+    },
+    resetNewArticle() {
+      this.newArticle = {
+        menu_id: "",
+        article_name: "",
+        description: "",
+        price: 0,
+      };
     },
     selectItemForEdit(item, index) {
       this.selectedItem = item;
@@ -59,7 +72,7 @@ export default {
     async modifierItem() {
       try {
         await updateArticle(this.editItem._id, this.editItem);
-        this.menuItems.splice(this.selectedIndex, 1, this.editItem);
+        this.articlesItems.splice(this.selectedIndex, 1, this.editItem);
         this.selectedItem = null;
         this.editItem = null;
         this.selectedIndex = null;
@@ -71,6 +84,13 @@ export default {
       this.selectedItem = null;
       this.editItem = null;
       this.selectedIndex = null;
+    },
+    showAddArticleForm() {
+      this.isAddingArticle = true;
+    },
+    cancelAddArticle() {
+      this.isAddingArticle = false;
+      this.resetNewArticle();
     },
   },
 };

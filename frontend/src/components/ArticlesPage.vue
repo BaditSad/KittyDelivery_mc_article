@@ -1,4 +1,4 @@
-<script src="../scripts/ArticlePage.js"></script>
+<script src="../scripts/ArticlesPage.js"></script>
 <style src="../stylesheets/styles.css" scoped></style>
 
 <template>
@@ -16,11 +16,12 @@
         <div class="card-items">
           <div
             class="card-item"
-            v-for="(item, index) in menuItems"
+            v-for="(item, index) in articlesItems"
             :key="index"
           >
-            <p class="item">Prix : {{ item.article_price }} €</p>
+            <p class="item">{{ item.article_name }}</p>
             <p class="item">{{ item.article_description }}</p>
+            <p class="item">Prix : {{ item.article_price }} €</p>
             <div class="buttons">
               <button
                 class="button-update"
@@ -34,7 +35,7 @@
             </div>
           </div>
         </div>
-        <button class="add-button" @click="addItem">Ajouter un produit</button>
+        <button class="add-button" @click="showAddArticleForm">Ajouter un produit</button>
       </div>
       <div class="sidebar">
         <button>Mes commandes et statistiques</button>
@@ -58,6 +59,8 @@
         </div>
       </div>
     </div>
+
+    <!-- popup edit article -->
     <div v-if="selectedItem" class="edit-form">
       <h2>Modifier l'article</h2>
       <form @submit.prevent="modifierItem">
@@ -82,5 +85,38 @@
         <button type="button" @click="cancelEdit">Annuler</button>
       </form>
     </div>
+
+    <!-- popup add article -->
+    <div v-if="isAddingArticle" class="add-form">
+      <h2>Ajouter un nouvel article</h2>
+      <form @submit.prevent="addItem">
+        <input
+          type="text"
+          v-model="newArticle.article_name"
+          placeholder="Nom de l'article"
+          required
+        />
+        <input
+          type="text"
+          v-model="newArticle.article_type"
+          placeholder="Type de l'article"
+          required
+        />
+        <textarea
+          v-model="newArticle.article_description"
+          placeholder="Description"
+          required
+        ></textarea>
+        <input
+          type="number"
+          v-model="newArticle.article_price"
+          placeholder="Prix"
+          required
+        />
+        <button type="submit">Ajouter</button>
+        <button type="button" @click="cancelAddArticle">Annuler</button>
+      </form>
+    </div>
   </div>
 </template>
+

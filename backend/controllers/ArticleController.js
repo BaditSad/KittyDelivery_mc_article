@@ -4,9 +4,10 @@ const mongoose = require("mongoose");
 module.exports = router;
 const Article = require("../models/article");
 
-router.get("/articles", async (req, res) => {
+router.get("/restaurants/:restaurantId/articles", async (req, res) => {
+  const { restaurantId } = req.params;
   try {
-    const articles = await Article.find({});
+    const articles = await Article.find({ restaurant_id: restaurantId });
     res.json(articles);
   } catch (error) {
     res.status(500).json({ message: error.message });

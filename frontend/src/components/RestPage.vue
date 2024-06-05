@@ -43,12 +43,12 @@
             </div>
           </div>
         </div>
-        <button class="add-button" @click="addMenu">Ajouter un menu</button>
+        <button class="add-button" @click="showAddMenuForm">
+          Ajouter un menu
+        </button>
       </div>
       <div class="sidebar">
-        <router-link to="/stats">
-          <button>Mes commandes et statistiques</button>
-        </router-link>
+        <button>Mes commandes et statistiques</button>
         <div class="delivery-status">
           <h3>Suivi de livraisons</h3>
           <p class="delivery">Pas de livraison en cours</p>
@@ -69,6 +69,7 @@
         </div>
       </div>
     </div>
+    <!--- popup edit menu -->
     <div v-if="selectedItem" class="edit-form">
       <h2>Modifier le menu</h2>
       <form @submit.prevent="updateMenu">
@@ -106,6 +107,47 @@
         />
         <button type="submit">Enregistrer</button>
         <button type="button" @click="cancelEditMenu">Annuler</button>
+      </form>
+    </div>
+
+    <!--- popup add menu -->
+    <div v-if="isAddingMenu" class="add-form">
+      <h2>Ajouter un nouveau menu</h2>
+      <form @submit.prevent="addMenu">
+        <input
+          type="text"
+          v-model="newMenu.menu_name"
+          placeholder="Nom du menu"
+          required
+        />
+        <textarea
+          v-model="newMenu.menu_description"
+          placeholder="Description"
+          required
+        ></textarea>
+        <div
+          v-for="(article, articleIndex) in newMenu.article_list"
+          :key="articleIndex"
+        >
+          <input
+            type="text"
+            v-model="newMenu.article_list[articleIndex]"
+            :placeholder="'Article ' + (articleIndex + 1)"
+            required
+          />
+          <button type="button" @click="removeNewArticle(articleIndex)">
+            Supprimer
+          </button>
+        </div>
+        <button type="button" @click="addNewArticle">Ajouter un article</button>
+        <input
+          type="number"
+          v-model="newMenu.menu_price"
+          placeholder="Prix"
+          required
+        />
+        <button type="submit">Ajouter</button>
+        <button type="button" @click="cancelAddMenu">Annuler</button>
       </form>
     </div>
   </div>

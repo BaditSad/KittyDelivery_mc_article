@@ -11,6 +11,13 @@ export default {
       selectedItem: null,
       editItem: null,
       selectedIndex: null,
+      newMenu: {
+        menu_name: "",
+        menu_description: "",
+        menu_price: 0,
+        article_list: [""],
+      },
+      isAddingMenu: false, // Propriété pour suivre l'état du formulaire d'ajout
     };
   },
   async mounted() {
@@ -38,19 +45,24 @@ export default {
       }
     },
     async addMenu() {
-      const newMenu = {
-        menu_name: "Nouveau Menu",
-        menu_description: "Description du menu",
-        menu_price: 10,
-        article_list: ["Article 1", "Article 2"],
-        restaurant_id: 1,
-      };
       try {
-        const createdMenu = await postMenu(newMenu);
+        //need to call user => restaurant_id
+        this.newMenu.restaurant_id = "1";
+        const createdMenu = await postMenu(this.newMenu);
         this.menuItems.push(createdMenu);
+        this.resetNewMenu();
+        this.isAddingMenu = false;
       } catch (error) {
         console.error("Erreur lors de la création du menu:", error);
       }
+    },
+    resetNewMenu() {
+      this.newMenu = {
+        menu_name: "",
+        menu_description: "",
+        menu_price: 0,
+        article_list: [""],
+      };
     },
     selectMenuForEdit(item, index) {
       this.selectedItem = item;
@@ -76,9 +88,21 @@ export default {
     addArticle() {
       this.editItem.article_list.push("");
     },
-
     removeArticle(index) {
       this.editItem.article_list.splice(index, 1);
+    },
+    addNewArticle() {
+      this.newMenu.article_list.push("");
+    },
+    removeNewArticle(index) {
+      this.newMenu.article_list.splice(index, 1);
+    },
+    showAddMenuForm() {
+      this.isAddingMenu = true;
+    },
+    cancelAddMenu() {
+      this.isAddingMenu = false;
+      this.resetNewMenu();
     },
   },
 };
