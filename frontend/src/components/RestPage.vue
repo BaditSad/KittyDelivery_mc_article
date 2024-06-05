@@ -1,4 +1,4 @@
-<script src="../scripts/services.js"></script>
+<script src="../scripts/RestPage.js"></script>
 <style src="../stylesheets/styles.css" scoped></style>
 
 <template>
@@ -6,7 +6,7 @@
     <img class="logo" src="../assets/logo.jpg" alt="Kitty Delivery logo" />
     <img class="title" src="../assets/title.png" alt="Kitty Delivery title" />
     <router-link to="/profile">
-        <button class="profile_button">Profile</button>
+      <button class="profile_button">Profile</button>
     </router-link>
   </header>
   <div class="container">
@@ -19,15 +19,31 @@
             v-for="(item, index) in menuItems"
             :key="index"
           >
-            <p class="item">Prix : {{ item.article_price }} €</p>
-            <p class="item">{{ item.article_description }}</p>
+            <p class="item">{{ item.menu_name }}</p>
+            <p class="item">{{ item.menu_description }}</p>
+            <ul>
+              <p
+                v-for="(article, articleIndex) in item.article_list"
+                :key="articleIndex"
+              >
+                {{ article }}
+              </p>
+            </ul>
+            <p class="item">Prix : {{ item.menu_price }} €</p>
             <div class="buttons">
-              <button class="button-update" @click="selectItemForEdit(item, index)"> Modifier </button>
-              <button class="button-delete" @click="deleteItem(item)"> Supprimer </button>
+              <button
+                class="button-update"
+                @click="selectMenuForEdit(item, index)"
+              >
+                Modifier
+              </button>
+              <button class="button-delete" @click="deleteMenu(item)">
+                Supprimer
+              </button>
             </div>
           </div>
         </div>
-        <button class="add-button" @click="addItem">Ajouter un produit</button>
+        <button class="add-button" @click="addMenu">Ajouter un menu</button>
       </div>
       <div class="sidebar">
         <router-link to="/stats">
@@ -43,34 +59,53 @@
         <div class="referral">
           <h3>Parrainage</h3>
           <label>
-            <input class="text" type="email" placeholder="Adresse mail à parrainer" />
+            <input
+              class="text"
+              type="email"
+              placeholder="Adresse mail à parrainer"
+            />
           </label>
           <button>Parrainer</button>
         </div>
       </div>
     </div>
     <div v-if="selectedItem" class="edit-form">
-      <h2>Modifier l'article</h2>
-      <form @submit.prevent="modifierItem">
+      <h2>Modifier le menu</h2>
+      <form @submit.prevent="updateMenu">
         <input
           type="text"
-          v-model="editItem.article_name"
-          placeholder="Nom de l'article"
+          v-model="editItem.menu_name"
+          placeholder="Nom du menu"
           required
         />
         <textarea
-          v-model="editItem.article_description"
+          v-model="editItem.menu_description"
           placeholder="Description"
           required
         ></textarea>
+        <div
+          v-for="(article, articleIndex) in editItem.article_list"
+          :key="articleIndex"
+        >
+          <input
+            type="text"
+            v-model="editItem.article_list[articleIndex]"
+            :placeholder="'Article ' + (articleIndex + 1)"
+            required
+          />
+          <button type="button" @click="removeArticle(articleIndex)">
+            Supprimer
+          </button>
+        </div>
+        <button type="button" @click="addArticle">Ajouter un article</button>
         <input
           type="number"
-          v-model="editItem.article_price"
+          v-model="editItem.menu_price"
           placeholder="Prix"
           required
         />
         <button type="submit">Enregistrer</button>
-        <button type="button" @click="cancelEdit">Annuler</button>
+        <button type="button" @click="cancelEditMenu">Annuler</button>
       </form>
     </div>
   </div>
