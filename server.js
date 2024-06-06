@@ -1,12 +1,9 @@
-const menusRouter = require("./controllers/MenuController");
-const notificationsRouter = require("./controllers/NotificationController");
-const ordersRouter = require("./controllers/OrderController");
 const articlesRouter = require("./controllers/ArticleController");
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
-const port = 3000;
+const port = 3006;
 
 app.use(cors());
 
@@ -25,9 +22,6 @@ db.mongoose
 
 app.use(bodyParser.json());
 
-app.use("/api", menusRouter);
-app.use("/api", notificationsRouter);
-app.use("/api", ordersRouter);
-app.use("/api", articlesRouter);
+app.use("/", articlesRouter);
 
-app.listen(port, () => console.log("app running on http://localhost:3000"));
+app.listen(port, () => console.log(`app running on http://localhost:${port}`));
