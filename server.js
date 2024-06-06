@@ -1,5 +1,4 @@
-const cardsRouter = require("./controllers/CardController");
-const deliveriesRouter = require("./controllers/DeliveryController");
+const menusRouter = require("./controllers/MenuController");
 const notificationsRouter = require("./controllers/NotificationController");
 const ordersRouter = require("./controllers/OrderController");
 const articlesRouter = require("./controllers/ArticleController");
@@ -13,10 +12,7 @@ app.use(cors());
 
 const db = require("./models");
 db.mongoose
-  .connect(db.url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(db.url)
   .then(() => {
     console.log("Connected to the database!");
   })
@@ -29,8 +25,7 @@ db.mongoose
 
 app.use(bodyParser.json());
 
-app.use("/api", cardsRouter);
-app.use("/api", deliveriesRouter);
+app.use("/api", menusRouter);
 app.use("/api", notificationsRouter);
 app.use("/api", ordersRouter);
 app.use("/api", articlesRouter);
