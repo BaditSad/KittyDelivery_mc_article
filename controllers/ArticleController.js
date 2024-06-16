@@ -20,32 +20,15 @@ const upload = multer({ storage: storage });
 
 router.get("/:restaurantId", async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
     const articles = await Article.find({
       restaurant_id: req.params.restaurantId,
-    })
-      .skip(skip)
-      .limit(limit);
-
-    const totalArticles = await Article.countDocuments({
-      restaurant_id: req.params.restaurantId,
     });
-
     if (!articles) {
-      return res.status(404).json({ message: "Not found" });
+      return res
+        .status(404)
+        .json({ message: "Articles not found for this restaurant!" });
     }
-
-    if (articles.length === 0) {
-      return res.status(201).json({ message: "Empty" });
-    }
-
-    res.status(201).json({
-      totalPages: Math.ceil(totalArticles / limit),
-      articles: articles,
-    });
+    res.json(articles);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -54,12 +37,10 @@ router.get("/:restaurantId", async (req, res) => {
 router.delete("/:articleId", async (req, res) => {
   try {
     const article = await Article.findByIdAndDelete(req.params.articleId);
-
     if (!article) {
-      return res.status(404).json({ message: "Not found" });
+      return res.status(404).json({ message: "Article not found!" });
     }
-
-    res.status(201).json({ message: "Item deleted" });
+    res.json({ message: "Article deleted successfully!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -68,17 +49,21 @@ router.delete("/:articleId", async (req, res) => {
 router.post("/",upload.single('article_image'), async (req, res) => {
   try {
     const { restaurant_id, article_type, article_name, article_description, article_price } = req.body;
+    console.log("🚀 ~ router.post ~ req.body:", req.body)
     const article = await Article.create({
-      restaurant_id,
+      restaurant_id: 1,
       article_type,
       article_name,
       article_description,
       article_price,
       article_image: "/storage/"+req.file.filename
     });
+      console.log("🚀 ~ router.post ~ req.file:", req.file)
     await article.save();
     res.status(201).send(article);
-  } catch (error) {    
+  } catch (error) {
+    console.log("🚀 ~ router.post ~ error:", error)
+    
         res.status(400).send(error);
   }
 });
@@ -104,12 +89,10 @@ router.put("/:articleId", async (req, res) => {
         runValidators: true,
       }
     );
-
     if (!article) {
-      return res.status(404).json({ message: "Not found!" });
+      return res.status(404).json({ message: "Article not found!" });
     }
-
-    res.status(201).json({ message: "Item updated" });
+    res.json(article);
   } catch (error) {
     res.status(400).send(error);
   }
