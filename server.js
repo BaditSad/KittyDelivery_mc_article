@@ -21,7 +21,10 @@ db.mongoose
 //Ici on envoit les infos vers le front
 
 app.use(bodyParser.json());
+const path = require("path");
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/storage", express.static(path.join(process.cwd(), "./storage")));
 app.use("/", articlesRouter);
 
 app.listen(port, () => console.log(`app running on http://localhost:${port}`));
