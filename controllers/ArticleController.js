@@ -49,7 +49,6 @@ router.delete("/:articleId", async (req, res) => {
 router.post("/",upload.single('article_image'), async (req, res) => {
   try {
     const { restaurant_id, article_type, article_name, article_description, article_price } = req.body;
-    console.log("🚀 ~ router.post ~ req.body:", req.body)
     const article = await Article.create({
       restaurant_id: 1,
       article_type,
@@ -58,11 +57,9 @@ router.post("/",upload.single('article_image'), async (req, res) => {
       article_price,
       article_image: "/storage/"+req.file.filename
     });
-      console.log("🚀 ~ router.post ~ req.file:", req.file)
     await article.save();
     res.status(201).send(article);
   } catch (error) {
-    console.log("🚀 ~ router.post ~ error:", error)
     
         res.status(400).send(error);
   }
