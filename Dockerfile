@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3006
 
 # Démarrer l'application
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "node migration.js && npm start"]
