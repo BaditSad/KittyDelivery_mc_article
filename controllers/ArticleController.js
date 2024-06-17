@@ -50,7 +50,7 @@ router.post("/",upload.single('article_image'), async (req, res) => {
   try {
     const { restaurant_id, article_type, article_name, article_description, article_price } = req.body;
     const article = await Article.create({
-      restaurant_id: 1,
+      restaurant_id,
       article_type,
       article_name,
       article_description,
