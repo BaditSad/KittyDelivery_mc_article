@@ -2,9 +2,10 @@ version: '3.8'
 
 services:
   mc_article:
+    container_name: mc_article_0
     build: .
     ports:
-      - "3006:3006"
+      - "3060:3006"
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
