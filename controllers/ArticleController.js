@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
 const multer = require("multer");
 const path = require("path");
 module.exports = router;
@@ -8,27 +7,41 @@ const Article = require("../models/article");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(process.cwd(), "./storage")); 
+    cb(null, path.join(process.cwd(), "./storage"));
   },
   filename: function (req, file, cb) {
-    console.log(file);
-    cb(null, Date.now() + '-' + path.extname(file.originalname)); 
-  }
+    cb(null, Date.now() + "-" + path.extname(file.originalname));
+  },
 });
 
 const upload = multer({ storage: storage });
 
 router.get("/:restaurantId", async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const articles = await Article.find({
       restaurant_id: req.params.restaurantId,
-    });
+    })
+      .skip(skip)
+      .limit(limit);
+
+    const totalArticles = await Article.countDocuments();
+
     if (!articles) {
-      return res
-        .status(404)
-        .json({ message: "Articles not found for this restaurant!" });
+      return res.status(404).json({ message: "Not found" });
     }
-    res.json(articles);
+
+    if (articles.length === 0) {
+      return res.status(201).json({ message: "Empty" });
+    }
+
+    res.status(201).json({
+      totalPages: Math.ceil(totalArticles / limit),
+      articles: articles,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -37,31 +50,41 @@ router.get("/:restaurantId", async (req, res) => {
 router.delete("/:articleId", async (req, res) => {
   try {
     const article = await Article.findByIdAndDelete(req.params.articleId);
+
     if (!article) {
-      return res.status(404).json({ message: "Article not found!" });
+      return res.status(404).json({ message: "Not found!" });
     }
-    res.json({ message: "Article deleted successfully!" });
+
+    res.status(201).json({ message: "Item deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-router.post("/",upload.single('article_image'), async (req, res) => {
+router.post("/", upload.single("article_image"), async (req, res) => {
   try {
-    const { restaurant_id, article_type, article_name, article_description, article_price } = req.body;
+    const {
+      restaurant_id,
+      article_type,
+      article_name,
+      article_description,
+      article_price,
+    } = req.body;
+
     const article = await Article.create({
       restaurant_id,
       article_type,
       article_name,
       article_description,
       article_price,
-      article_image: "/storage/"+req.file.filename
+      article_image: "/storage/" + req.file.filename,
     });
+
     await article.save();
-    res.status(201).send(article);
+
+    res.status(201).json({ message: "item posted" });
   } catch (error) {
-    
-        res.status(400).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -76,8 +99,9 @@ router.put("/:articleId", async (req, res) => {
     };
 
     if (req.file) {
-      updateData.article_image = req.file.path; 
+      updateData.article_image = req.file.path;
     }
+
     const article = await Article.findByIdAndUpdate(
       req.params.articleId,
       req.body,
@@ -86,11 +110,13 @@ router.put("/:articleId", async (req, res) => {
         runValidators: true,
       }
     );
+
     if (!article) {
-      return res.status(404).json({ message: "Article not found!" });
+      return res.status(404).json({ message: "Not found!" });
     }
-    res.json(article);
+
+    res.status(201).json({ message: "item updated" });
   } catch (error) {
-    res.status(400).send(error);
+    res.status(500).send(error);
   }
 });
