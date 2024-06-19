@@ -1,31 +1,41 @@
+require("dotenv").config();
+
+const articlesRouter = require("./controllers/ArticleController");
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const fs = require("fs");
+const path = require("path");
 
-dotenv.config();
-
-const articlesRouter = require("./controllers/ArticleController");
 const app = express();
-const port = process.env.PORT || 3006;
+const port = process.env.PORT;
+const mongoURI = process.env.MONGO_URI;
+
+const swaggerDocumentd = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "swagger.json"))
+);
 
 app.use(cors());
+app.use(bodyParser.json());
 
-const dbUrl = process.env.MONGO_URI || "mongodb://localhost:27017/kittydelivery";
+app.use("/swagger.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerDocumentd);
+});
 
 mongoose
-  .connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
-    console.log("Connected to the database!");
+    console.log("Connected to MongoDB!");
   })
   .catch((err) => {
-    console.log("Cannot connect to the database!", err);
+    console.error("Error connecting to MongoDB:", err);
     process.exit();
   });
-
-app.use(bodyParser.json());
-const path = require("path");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/storage", express.static(path.join(process.cwd(), "./storage")));
